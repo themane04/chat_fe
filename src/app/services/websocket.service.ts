@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { Client, Message } from '@stomp/stompjs';
+import {Injectable} from '@angular/core';
+import {Client, Message} from '@stomp/stompjs';
 import {ChatMessage} from '../models/message.model';
 
 @Injectable({
@@ -11,7 +11,6 @@ export class ChatService {
   constructor() {
     this.client = new Client({
       webSocketFactory: () => new WebSocket('ws://localhost:8080/ws'),
-      debug: (str) => { console.log(new Date(), str); }
     });
   }
 
@@ -31,7 +30,37 @@ export class ChatService {
   }
 
   sendMessage(content: string, sender: string) {
-    const chatMessage = { content, sender, type: 'CHAT' };
+    const chatMessage = {
+      id: 0,
+      content,
+      sender,
+      type: 'CHAT',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      status: 'SENT',
+      reactions: {},
+      replyToMessageId: null,
+      isEdited: false
+    };
+    this.client.publish({
+      destination: '/app/chat.sendMessage',
+      body: JSON.stringify(chatMessage)
+    });
+  }
+
+  replyToMessage(content: string, sender: string, replyToMessageId: number) {
+    const chatMessage = {
+      id: 0,
+      content,
+      sender,
+      type: 'CHAT',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      status: 'SENT',
+      reactions: {},
+      replyToMessageId,
+      isEdited: false
+    };
     this.client.publish({
       destination: '/app/chat.sendMessage',
       body: JSON.stringify(chatMessage)
@@ -42,6 +71,14 @@ export class ChatService {
     const chatMessage = { sender: username, type: 'JOIN' };
     this.client.publish({
       destination: '/app/chat.addUser',
+      body: JSON.stringify(chatMessage)
+    });
+  }
+
+  leaveUser(username: string) {
+    const chatMessage = {sender: username, type: 'LEAVE'};
+    this.client.publish({
+      destination: '/app/chat.leaveUser',
       body: JSON.stringify(chatMessage)
     });
   }

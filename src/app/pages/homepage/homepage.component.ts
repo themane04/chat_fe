@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {ChatService} from '../../services/websocket.service';
-import {NgForOf} from '@angular/common';
+import {DatePipe, NgClass, NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {ChatMessage} from '../../models/message.model';
 
@@ -9,12 +9,15 @@ import {ChatMessage} from '../../models/message.model';
   standalone: true,
   imports: [
     NgForOf,
-    FormsModule
+    FormsModule,
+    NgClass,
+    DatePipe,
+    NgIf
   ],
   templateUrl: './homepage.component.html',
   styleUrl: './homepage.component.css'
 })
-export class HomepageComponent implements OnInit {
+export class HomepageComponent implements OnInit, OnDestroy {
   messages: ChatMessage[] = [];
   messageContent = '';
   username = 'User' + Math.floor(Math.random() * 1000);
@@ -30,10 +33,23 @@ export class HomepageComponent implements OnInit {
     this.chatService.addUser(this.username);
   }
 
+  ngOnDestroy() {
+    this.chatService.leaveUser(this.username);
+  }
+
   sendMessage() {
     if (this.messageContent.trim()) {
       this.chatService.sendMessage(this.messageContent, this.username);
       this.messageContent = '';
     }
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  handleTabClose() {
+    this.chatService.leaveUser(this.username);
+  }
+
+  trackById(id: number) {
+    return id;
   }
 }
