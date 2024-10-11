@@ -1,17 +1,21 @@
 <div class="chat-container">
   <div class="message-list">
-    <ng-container *ngFor="let message of messages; trackBy: trackById">
-      <div [ngClass]="{'message-sent': message.sender === username,
-                      'message-received': message.sender !== username,
-                      'sent': message.status === 'SENT',
-                      'delivered': message.status === 'DELIVERED',
-                      'read': message.status === 'READ'}">
-        <span class="message-sender">{{ message.sender }}</span>
-        <p class="message-content">{{ message.content }}</p>
-        <small class="message-timestamp">{{ message.createdAt | date:'shortTime' }}</small>
-        <small class="message-status" *ngIf="message.sender === username">{{ message.status }}</small>
-      </div>
-    </ng-container>
+    @for (message of messages; track trackById) {
+      <ng-container>
+        <div [ngClass]="{'message-sent': message.sender === username,
+                        'message-received': message.sender !== username,
+                        'sent': message.status === 'SENT',
+                        'delivered': message.status === 'DELIVERED',
+                        'read': message.status === 'READ'}">
+          <span class="message-sender">{{ message.sender }}</span>
+          <p class="message-content">{{ message.content }}</p>
+          <small class="message-timestamp">{{ message.createdAt | date:'shortTime' }}</small>
+        </div>
+        @if (message.sender === username) {
+          <small class="message-status">{{ message.status }}</small>
+        }
+      </ng-container>
+    }
   </div>
   <div class="chat-input">
     <input [(ngModel)]="messageContent" placeholder="Type a message..." role="textbox" class="input-field"/>
