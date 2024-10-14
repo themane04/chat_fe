@@ -1,5 +1,5 @@
-import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
-import {ChatService} from '../../services/websocket.service';
+import {Component, HostListener, OnInit} from '@angular/core';
+import {chatService} from '../../services/websocket.service';
 import {DatePipe, NgClass, NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {ChatMessage} from '../../models/message.model';
@@ -17,34 +17,27 @@ import {ChatMessage} from '../../models/message.model';
   templateUrl: './homepage.component.html',
   styleUrl: './homepage.component.css'
 })
-export class HomepageComponent implements OnInit, OnDestroy {
+export class HomepageComponent implements OnInit {
   messages: ChatMessage[] = [];
   messageContent = '';
   username = 'User' + Math.floor(Math.random() * 1000);
 
-  constructor(private chatService: ChatService) {
+  constructor(private chatService: chatService) {
   }
 
   ngOnInit() {
     this.chatService.connect((message: ChatMessage) => {
       message.createdAt = new Date(message.createdAt);
-
       if (message.type === 'JOIN') {
-        console.log('Processing JOIN message for:', message.sender);
         message.content = `${message.sender} has joined the chat.`;
-        console.log('JOIN message content set:', message.content);
       }
-
       this.messages.push(message);
-      console.log('Messages array:', this.messages);
     });
 
-    this.chatService.addUser(this.username);
-  }
-
-
-  ngOnDestroy() {
-    this.chatService.leaveUser(this.username);
+    this.chatService.client.onConnect = () => {
+      this.chatService.addUser(this.username);
+    };
+    this.chatService.client.activate();
   }
 
   sendMessage() {

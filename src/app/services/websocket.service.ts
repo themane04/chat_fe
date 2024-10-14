@@ -5,8 +5,8 @@ import {ChatMessage} from '../models/message.model';
 @Injectable({
   providedIn: 'root'
 })
-export class ChatService {
-  private client: Client;
+export class chatService {
+  client: Client;
 
   constructor() {
     this.client = new Client({
@@ -46,11 +46,15 @@ export class ChatService {
 
   addUser(username: string) {
     const chatMessage = { sender: username, type: 'JOIN' };
-    console.log('Publishing JOIN message:', chatMessage); // Log message being sent
-    this.client.publish({
-      destination: '/app/chat.addUser',
-      body: JSON.stringify(chatMessage)
-    });
+    try {
+      console.log('Publishing JOIN message:', chatMessage);
+      this.client.publish({
+        destination: '/app/chat.addUser',
+        body: JSON.stringify(chatMessage)
+      });
+    } catch (error) {
+      console.error('Error publishing JOIN message:', error);
+    }
   }
 
   leaveUser(username: string) {
