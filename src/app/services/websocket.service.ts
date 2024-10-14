@@ -47,7 +47,6 @@ export class chatService {
   addUser(username: string) {
     const chatMessage = { sender: username, type: 'JOIN' };
     try {
-      console.log('Publishing JOIN message:', chatMessage);
       this.client.publish({
         destination: '/app/chat.addUser',
         body: JSON.stringify(chatMessage)
