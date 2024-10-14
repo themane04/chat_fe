@@ -32,34 +32,11 @@ export class ChatService {
   sendMessage(content: string, sender: string) {
     const chatMessage = {
       id: 0,
-      content,
-      sender,
+      content: content,
+      sender: sender,
       type: 'CHAT',
       createdAt: new Date(),
-      updatedAt: new Date(),
-      status: 'SENT',
-      reactions: {},
-      replyToMessageId: null,
-      isEdited: false
-    };
-    this.client.publish({
-      destination: '/app/chat.sendMessage',
-      body: JSON.stringify(chatMessage)
-    });
-  }
-
-  replyToMessage(content: string, sender: string, replyToMessageId: number) {
-    const chatMessage = {
-      id: 0,
-      content,
-      sender,
-      type: 'CHAT',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      status: 'SENT',
-      reactions: {},
-      replyToMessageId,
-      isEdited: false
+      replyToMessageId: null
     };
     this.client.publish({
       destination: '/app/chat.sendMessage',
@@ -69,6 +46,7 @@ export class ChatService {
 
   addUser(username: string) {
     const chatMessage = { sender: username, type: 'JOIN' };
+    console.log('Publishing JOIN message:', chatMessage); // Log message being sent
     this.client.publish({
       destination: '/app/chat.addUser',
       body: JSON.stringify(chatMessage)

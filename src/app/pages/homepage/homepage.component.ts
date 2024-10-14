@@ -27,14 +27,21 @@ export class HomepageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.chatService.connect((message: ChatMessage) => {
+      message.createdAt = new Date(message.createdAt);
+
       if (message.type === 'JOIN') {
+        console.log('Processing JOIN message for:', message.sender);
         message.content = `${message.sender} has joined the chat.`;
+        console.log('JOIN message content set:', message.content);
       }
+
       this.messages.push(message);
+      console.log('Messages array:', this.messages);
     });
 
     this.chatService.addUser(this.username);
   }
+
 
   ngOnDestroy() {
     this.chatService.leaveUser(this.username);

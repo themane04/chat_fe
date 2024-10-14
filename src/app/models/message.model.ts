@@ -1,12 +1,7 @@
-type MessageType =
+export type MessageType =
   'CHAT' |
   'JOIN' |
   'LEAVE';
-
-type MessageStatus =
-  'SENT' |
-  'DELIVERED' |
-  'READ';
 
 export interface ChatMessage {
   id: number;
@@ -14,9 +9,5 @@ export interface ChatMessage {
   sender: string;
   type: MessageType;
   createdAt: Date;
-  updatedAt: Date;
-  status: MessageStatus;
-  reactions: Record<string, number>;
   replyToMessageId: number;
-  isEdited: boolean;
 }
