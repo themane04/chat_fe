@@ -43,36 +43,24 @@ export class HomepageComponent implements OnInit {
   }
 
   ngOnInit() {
-    setTimeout(() => {
-      this.chatService.getMessages().subscribe((messages: ChatMessage[]) => {
-        this.messages = messages.map(message => ({
-          ...message,
-          createdAt: new Date(message.createdAt)
-        }));
-        this.messages.forEach(message => {
-          message.createdAt = new Date(message.createdAt);
-        });
-      });
+    this.chatService.getMessages().subscribe((messages: ChatMessage[]) => {
+      this.messages = messages.map(message => ({
+        ...message,
+        createdAt: new Date(message.createdAt)
+      }));
       this.scrollToBottom();
-    }, 1000);
+    });
+
     this.chatService.connect((message: ChatMessage) => {
-      message.createdAt = new Date(message.createdAt);
-      if (message.type === 'JOIN') {
-        message.content = `${message.sender} has joined the chat.`;
-      }
       this.messages = [...this.messages, message];
       this.scrollToBottom();
       this.cdr.detectChanges();
     });
 
     this.chatService.client.onConnect = () => {
-      this.chatService.client.subscribe('/user/queue/messages', (message: Message) => {
-        const messages: ChatMessage[] = JSON.parse(message.body);
-        this.messages = [...messages, ...this.messages];
-        this.scrollToBottom();
-      });
       this.chatService.addUser(this.username);
     };
+
     this.chatService.client.activate();
   }
 

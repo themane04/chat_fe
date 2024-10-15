@@ -18,7 +18,10 @@ export class chatService {
   connect(onMessage: (message: ChatMessage) => void) {
     this.client.onConnect = () => {
       this.client.subscribe('/topic/public', (message: Message) => {
-        onMessage(JSON.parse(message.body));
+        console.log('Received message:', message);
+        const receivedMessage= JSON.parse(message.body);
+        console.log('Message parsed:', receivedMessage);
+        onMessage(receivedMessage);
       });
     };
 
