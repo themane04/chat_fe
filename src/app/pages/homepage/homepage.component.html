@@ -1,15 +1,28 @@
 <div class="chat-container">
-  <div class="message-list">
-    <div *ngFor="let message of messages; trackBy: trackById">
-      <div [ngClass]="{'message-sent': message.sender === username, 'message-received': message.sender !== username}">
-        <span class="message-sender">{{ message.sender }}</span>
-        <p class="message-content">{{ message.content }}</p>
-        <small class="message-timestamp">{{ message.createdAt | date:'shortTime' }}</small>
-      </div>
+  <div class="message-list" #messageList>
+    <div *ngFor="let message of messages; trackBy: trackById"
+         [ngClass]="{
+           'message-sent': message.sender === username && message.type === 'CHAT',
+           'message-received': message.sender !== username && message.type === 'CHAT',
+           'message-join': message.type === 'JOIN',
+           'message-leave': message.type === 'LEAVE'
+         }">
+      <span class="message-sender"
+            *ngIf="message.type !== 'JOIN' && message.type !== 'LEAVE'">{{ message.sender }}</span>
+      <p
+        [class]="message.type === 'JOIN' || message.type === 'LEAVE' ? 'short-message-content' : 'message-content'"
+      >
+        {{ message.content }}
+      </p>
+      <small class="message-timestamp">{{ message.createdAt | date:'shortTime' }}</small>
     </div>
   </div>
   <div class="chat-input">
-    <input [(ngModel)]="messageContent" placeholder="Type a message..." role="textbox" class="input-field"/>
+    <input [(ngModel)]="messageContent"
+           placeholder="Type a message..."
+           role="textbox"
+           class="input-field"
+           (keydown.enter)="sendMessage()"/>
     <button (click)="sendMessage()" class="send-button">Send</button>
   </div>
 </div>

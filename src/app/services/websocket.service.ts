@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Client, Message} from '@stomp/stompjs';
 import {ChatMessage} from '../models/message.model';
+import {HttpClient} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,7 @@ import {ChatMessage} from '../models/message.model';
 export class chatService {
   client: Client;
 
-  constructor() {
+  constructor(private http: HttpClient) {
     this.client = new Client({
       webSocketFactory: () => new WebSocket('ws://localhost:8080/ws'),
     });
@@ -27,6 +28,10 @@ export class chatService {
     };
 
     this.client.activate();
+  }
+
+  getMessages() {
+    return this.http.get<ChatMessage[]>('http://localhost:8080/api/messages');
   }
 
   sendMessage(content: string, sender: string) {
