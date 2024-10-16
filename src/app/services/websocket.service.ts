@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {Client, Message} from '@stomp/stompjs';
 import {ChatMessage} from '../models/message.model';
 import {HttpClient} from '@angular/common/http';
+import {environments} from '../environments/environments';
 
 @Injectable({
   providedIn: 'root'
@@ -11,13 +12,13 @@ export class chatService {
 
   constructor(private http: HttpClient) {
     this.client = new Client({
-      webSocketFactory: () => new WebSocket('ws://localhost:8080/ws'),
+      webSocketFactory: () => new WebSocket(`${environments.BACKEND_WS_URL}`),
     });
   }
 
   connect(onMessage: (message: ChatMessage) => void) {
     this.client.onConnect = () => {
-      this.client.subscribe('/topic/public', (message: Message) => {
+      this.client.subscribe(`${environments.WS.public}`, (message: Message) => {
         console.log('Received message:', message);
         const receivedMessage= JSON.parse(message.body);
         console.log('Message parsed:', receivedMessage);
@@ -34,7 +35,7 @@ export class chatService {
   }
 
   getMessages() {
-    return this.http.get<ChatMessage[]>('http://localhost:8080/api/messages');
+    return this.http.get<ChatMessage[]>(`${environments.BACKEND_API_URL}${environments.API.messages}`);
   }
 
   sendMessage(content: string, sender: string) {
@@ -47,7 +48,7 @@ export class chatService {
       replyToMessageId: null
     };
     this.client.publish({
-      destination: '/app/chat.sendMessage',
+      destination: `${environments.WS.chatSendMessage}`,
       body: JSON.stringify(chatMessage)
     });
   }
@@ -56,7 +57,7 @@ export class chatService {
     const chatMessage = { sender: username, type: 'JOIN' };
     try {
       this.client.publish({
-        destination: '/app/chat.addUser',
+        destination: `${environments.WS.chatAddUser}`,
         body: JSON.stringify(chatMessage)
       });
     } catch (error) {
@@ -67,7 +68,7 @@ export class chatService {
   leaveUser(username: string) {
     const chatMessage = {sender: username, type: 'LEAVE'};
     this.client.publish({
-      destination: '/app/chat.leaveUser',
+      destination: `${environments.WS.leaveUser}`,
       body: JSON.stringify(chatMessage)
     });
   }
