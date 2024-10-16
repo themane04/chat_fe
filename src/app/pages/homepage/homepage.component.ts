@@ -42,8 +42,15 @@ export class HomepageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.chatService.connect((message: IChatMessage) => {
-      this.messages = [...this.messages, message];
+    this.chatService.connect((messages: IChatMessage[] | IChatMessage) => {
+      if (Array.isArray(messages)) {
+        this.messages = messages.map(message => ({
+          ...message,
+          createdAt: new Date(message.createdAt)
+        }));
+      } else {
+        this.messages = [...this.messages, messages]
+      }
       this.scrollToBottom();
     });
   }

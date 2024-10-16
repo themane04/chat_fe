@@ -4,6 +4,7 @@ class api {
 
 class ws {
   public static readonly public = '/topic/public';
+  public static readonly getMessages = '/app/chat.getMessages';
   public static readonly chatSendMessage = '/app/chat.sendMessage';
   public static readonly chatAddUser = '/app/chat.addUser';
   public static readonly leaveUser = '/app/chat.leaveUser';

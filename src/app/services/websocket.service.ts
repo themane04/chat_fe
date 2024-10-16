@@ -17,7 +17,11 @@ export class chatService {
   }
 
   connect(onMessage: (message: IChatMessage) => void) {
-    this.client.onConnect = (frame) => {
+    this.client.onConnect = () => {
+      this.client.subscribe('/queue/messages', (message: Message) => {
+        const allMessages = JSON.parse(message.body);
+        onMessage(allMessages);
+      });
       this.client.subscribe(`${environments.WS.public}`, (message: Message) => {
         const receivedMessage = JSON.parse(message.body);
         onMessage(receivedMessage);
@@ -26,10 +30,12 @@ export class chatService {
     this.client.activate();
   }
 
-
-  // getMessages() {
-  //   return this.http.get<IChatMessage[]>(`${environments.BACKEND_API_URL}${environments.API.messages}`);
-  // }
+  getMessages() {
+    this.client.publish({
+      destination: `${environments.WS.getMessages}`,
+      body: ''
+    })
+  }
 
   sendMessage(content: string, sender: string) {
     const chatMessage = {
