@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Client, Message} from '@stomp/stompjs';
-import {ChatMessage} from '../models/message.model';
+import {IChatMessage} from '../models/message.model';
 import {HttpClient} from '@angular/common/http';
 import {environments} from '../environments/environments';
 
@@ -16,27 +16,20 @@ export class chatService {
     });
   }
 
-  connect(onMessage: (message: ChatMessage) => void) {
-    this.client.onConnect = () => {
+  connect(onMessage: (message: IChatMessage) => void) {
+    this.client.onConnect = (frame) => {
       this.client.subscribe(`${environments.WS.public}`, (message: Message) => {
-        console.log('Received message:', message);
-        const receivedMessage= JSON.parse(message.body);
-        console.log('Message parsed:', receivedMessage);
+        const receivedMessage = JSON.parse(message.body);
         onMessage(receivedMessage);
       });
     };
-
-    this.client.onStompError = (error) => {
-      console.error('Broker reported error: ' + error.headers['message']);
-      console.error('Additional details: ' + error.body);
-    };
-
     this.client.activate();
   }
 
-  getMessages() {
-    return this.http.get<ChatMessage[]>(`${environments.BACKEND_API_URL}${environments.API.messages}`);
-  }
+
+  // getMessages() {
+  //   return this.http.get<IChatMessage[]>(`${environments.BACKEND_API_URL}${environments.API.messages}`);
+  // }
 
   sendMessage(content: string, sender: string) {
     const chatMessage = {

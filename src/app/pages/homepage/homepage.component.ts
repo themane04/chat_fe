@@ -2,8 +2,7 @@ import {ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChil
 import {chatService} from '../../services/websocket.service';
 import {DatePipe, NgClass, NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {ChatMessage} from '../../models/message.model';
-import {Message} from '@stomp/stompjs';
+import {IChatMessage} from '../../models/message.model';
 import {HttpClientModule} from '@angular/common/http';
 
 @Component({
@@ -24,7 +23,7 @@ import {HttpClientModule} from '@angular/common/http';
 export class HomepageComponent implements OnInit {
   @ViewChild('messageList') messageList!: ElementRef;
 
-  messages: ChatMessage[] = [];
+  messages: IChatMessage[] = [];
   messageContent = '';
   username = 'User' + Math.floor(Math.random() * 1000);
 
@@ -43,30 +42,15 @@ export class HomepageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.chatService.getMessages().subscribe((messages: ChatMessage[]) => {
-      this.messages = messages.map(message => ({
-        ...message,
-        createdAt: new Date(message.createdAt)
-      }));
-      this.scrollToBottom();
-    });
-
-    this.chatService.connect((message: ChatMessage) => {
+    this.chatService.connect((message: IChatMessage) => {
       this.messages = [...this.messages, message];
       this.scrollToBottom();
-      this.cdr.detectChanges();
     });
-
-    this.chatService.client.onConnect = () => {
-      this.chatService.addUser(this.username);
-    };
-
-    this.chatService.client.activate();
   }
 
   sendMessage() {
     if (this.messageContent.trim()) {
-      const newMessage: ChatMessage = {
+      const newMessage: IChatMessage = {
         id: this.messages.length + 1,
         content: this.messageContent,
         sender: this.username,
@@ -87,7 +71,7 @@ export class HomepageComponent implements OnInit {
     this.chatService.leaveUser(this.username);
   }
 
-  trackById(index: number, message: ChatMessage) {
+  trackById(index: number, message: IChatMessage) {
     return message.id;
   }
 }

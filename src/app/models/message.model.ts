@@ -3,7 +3,7 @@ export type MessageType =
   'JOIN' |
   'LEAVE';
 
-export interface ChatMessage {
+export interface IChatMessage {
   id: number;
   content: string;
   sender: string;
