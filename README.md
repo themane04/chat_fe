@@ -1,27 +1,41 @@
-# ChatPrototypeMarjanFrontend
+# Chat Application Frontend
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.8.
+## Overview
+This project is the frontend part of a chat application developed using Angular. It's designed to interface with a Java Spring Boot backend to deliver real-time messaging capabilities.
 
-## Development server
+## Linking with Backend
+The frontend needs to connect to the Java Spring Boot backend to function properly. You can find the backend repository and setup instructions here: [Chat App Backend](https://github.com/themane04/chat_be).
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Features
+- Real-time messaging through WebSockets.
+- Clean and intuitive user interface.
 
-## Code scaffolding
+## Project Structure
+- **app**:
+  - **components**: Contains Angular components for the application.
+  - **services**: Services including `websocket.service.ts` which handles WebSocket connections.
+  - **models**: Data models like `message.model.ts`.
+  - **pages/homepage**: Contains the homepage component with associated HTML, CSS, and TypeScript.
+- **environments**: Configuration files for different deployment environments.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Setup
+To get this project up and running on your local machine, follow these steps:
 
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+1. Ensure you have Node.js and Angular CLI installed.
+2. Clone the repository
+```
+git clone git@github.com:themane04/chat_fe.git
+```
+3. Navigate into the project directory
+```
+cd chat_fe
+```
+4. Install dependencies:
+```
+npm install
+```
+5. Start the development server
+```
+ng serve
+```
+6. Open a web browser and navigate to `http://localhost:4200/` to view the app.
